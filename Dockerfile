@@ -13,7 +13,11 @@ RUN set -eux; \
 		echo 'listen = /tmp/php-fpm.sock'; \
         echo 'listen.backlog = -1'; \
         echo 'listen.mode = 0777'; \
-	} > /usr/local/etc/php-fpm.d/zz-docker.conf;
+	} > /usr/local/etc/php-fpm.d/zz-docker.conf; \
+    { \
+		echo 'post_max_size = 4096M'; \
+        echo 'upload_max_filesize = 4096M'; \
+	} >> /usr/local/etc/php/conf.d/docker-fpm.ini;
 
     
 # nginx part
@@ -117,12 +121,6 @@ RUN set -x \
     && ln -sf /dev/stderr /var/log/nginx/error.log \
 # create a docker-entrypoint.d directory
     && mkdir /docker-entrypoint.d
-
-RUN set -eux; \
-    { \
-		echo 'post_max_size = 4096M'; \
-        echo 'upload_max_filesize = 4096M'; \
-	} >> /usr/local/etc/php/conf.d/docker-fpm.ini;
 
 COPY nginx.conf /etc/nginx/
 COPY default.conf /etc/nginx/conf.d/
